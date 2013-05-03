@@ -10,7 +10,9 @@ class StreamingIterator[A](parser: JsonParser, mf: Manifest[A])
   if (parser.getCurrentToken == null) {
     parser.nextToken()
   }
-  require(parser.getCurrentToken == JsonToken.START_ARRAY)
+  if (parser.getCurrentToken != JsonToken.START_ARRAY) {
+    throw new ParsingException("Expected array, got: %s" format parser.getCurrentToken, null)
+  }
   parser.nextToken()
 
   def hasNext = parser.getCurrentToken != JsonToken.END_ARRAY && !parser.isClosed

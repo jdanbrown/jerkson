@@ -56,19 +56,13 @@ trait Parser extends Factory {
    * Parse a streaming JSON array of particular types, returning an iterator
    * of the elements of the stream.
    */
-  def stream[A](input: InputStream)(implicit mf: Manifest[A]): Iterator[A] = {
-    val parser = factory.createJsonParser(input)
-    new StreamingIterator[A](parser, mf)
-  }
+  def stream[A](input: InputStream)(implicit mf: Manifest[A]): Iterator[A] = stream[A](factory.createJsonParser(input), mf)
 
   /**
    * Parse a streaming JSON array of particular types, returning an iterator
    * of the elements of the stream.
    */
-  def stream[A](input: Reader)(implicit mf: Manifest[A]): Iterator[A] = {
-    val parser = factory.createJsonParser(input)
-    new StreamingIterator[A](parser, mf)
-  }
+  def stream[A](input: Reader)(implicit mf: Manifest[A]): Iterator[A] = stream[A](factory.createJsonParser(input), mf)
 
   /**
    * Returns true if the given class is deserializable.
@@ -76,16 +70,25 @@ trait Parser extends Factory {
   def canDeserialize[A](implicit mf: Manifest[A]) = mapper.canDeserialize(Types.build(mapper.getTypeFactory, mf))
 
   private[jerkson] def parse[A](parser: JsonParser, mf: Manifest[A]): A = {
-    try {
+    wrapErrors {
       if (mf.erasure == classOf[JValue] || mf.erasure == JNull.getClass) {
         val value: A = parser.getCodec.readValue(parser, Types.build(mapper.getTypeFactory, mf))
         if (value == null) JNull.asInstanceOf[A] else value
       } else {
         parser.getCodec.readValue(parser, Types.build(mapper.getTypeFactory, mf))
       }
-    } catch {
-      case e: JsonProcessingException => throw ParsingException(e)
-      case e: EOFException => throw new ParsingException("JSON document ended unexpectedly.", e)
     }
   }
+
+  private[jerkson] def stream[A](parser: JsonParser, mf: Manifest[A]) = new Iterator[A] {
+    val self    = wrapErrors { new StreamingIterator[A](parser, mf) }
+    def hasNext = wrapErrors { self.hasNext }
+    def next    = wrapErrors { self.next }
+  }
+
+  private def wrapErrors[X](x: => X): X = try x catch {
+    case e: JsonProcessingException => throw ParsingException(e)
+    case e: EOFException => throw new ParsingException("JSON document ended unexpectedly.", e)
+  }
+
 }
