@@ -9,12 +9,12 @@
     </prerequisites>
 
     <groupId>com.codahale</groupId>
-    <artifactId>jerkson_2.9.1</artifactId>
+    <artifactId>jerkson_2.10</artifactId>
     <version>0.6.0-pre-jdanbrown-4</version>
     <name>Jerkson for Scala</name>
 
     <properties>
-        <scala.version>2.9.1</scala.version>
+        <scala.version>2.10.2</scala.version>
         <jackson.version>2.0.2</jackson.version>
     </properties>
 
@@ -59,6 +59,11 @@
             <version>${scala.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-reflect</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
@@ -69,9 +74,9 @@
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codahale</groupId>
+            <groupId>com.simple</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.5.2</version>
+            <version>0.8.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -126,6 +131,7 @@
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                     </args>
+                    <!-- Not compatible with scala-2.10 [why do we need to compile on our gpu?]
                     <compilerPlugins>
                         <compilerPlugin>
                             <groupId>com.nativelibs4java</groupId>
@@ -133,6 +139,7 @@
                             <version>0.2</version>
                         </compilerPlugin>
                     </compilerPlugins>
+                    -->
                     <charset>UTF-8</charset>
                 </configuration>
             </plugin>

@@ -1,7 +1,7 @@
 package com.codahale.jerkson.tests
 
 import java.net.URI
-import com.codahale.simplespec.Spec
+import com.simple.simplespec.Spec
 import org.junit.Test
 import com.codahale.jerkson.Json._
 import java.util.UUID

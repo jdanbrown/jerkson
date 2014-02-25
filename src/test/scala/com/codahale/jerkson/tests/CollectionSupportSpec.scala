@@ -2,7 +2,7 @@ package com.codahale.jerkson.tests
 
 import scala.collection._
 import com.codahale.jerkson.Json._
-import com.codahale.simplespec.Spec
+import com.simple.simplespec.Spec
 import org.junit.{Ignore, Test}
 
 class CollectionSupportSpec extends Spec {
